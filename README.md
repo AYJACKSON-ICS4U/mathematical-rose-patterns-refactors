@@ -5,4 +5,4 @@ Creative object-oriented refactors of mathematical rose pattern coding challenge
 Remember the refactor must be object oriented. Do not mess with others refactors in the group or steal code. Make your own folder for your refactor when you clone into this repo. 
 
 ## Finding the refactors
-The refactors for each individual can be found in a folder in this repo that corresponds with their name.
+The refactors for each individual can be found in a folder in this repo that corresponds with their name. Currently, none of these refactors have a ewb environment and thus can only be accessed via a localhost or live server on your machine.
