@@ -1,13 +1,15 @@
+var nCount = 0, dCount = 1, nxtSet;
+
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
-  let reset = createButton('Reset');
-  reset.position(20, 24);
-  reset.style('padding', '10px');
-  reset.style('background-color', 'hsl(' + random(0, 360) + ', 100%, 50%)');
-  reset.style('border', 'outset');
-  reset.mousePressed(rst);
+  nxtSet = createButton('Next Set');
+  nxtSet.mousePressed(rst);
   colorMode(HSL);
   rectMode(RADIUS);
+}
+
+function windowResized() {
+  resizeCanvas(window.innerWidth, window.innerHeight);
 }
 
 class Rose {
@@ -17,32 +19,32 @@ class Rose {
     this.numerate = n;
     this.denominate = d;
     this.constant = n/d;
-    this.constant = this.constant.toPrecision(7);
-    this.hue = hue % 360;
+    this.startHue = hue % 360;
     this.saturation = "100";
     this.lightness = "50";
+    if (n/d < 1) {
+      this.constant = this.constant.toPrecision(3);
+    } else {
+      this.constant = this.constant.toPrecision(4);
+    }
   }
 
   draw() {
-    textAlign(LEFT, CENTER);
-    textSize(20);
-    fill(0);
-    text("N = " + this.numerate, -600, -20);
-    text("D = " + this.denominate, -600, 0);
-    text("K = " + this.constant, -600, 20);
-    strokeWeight(8);
-    var int = random(0.005, 4);
     var loop = reduceDenominator(this.numerate, this.denominate);
-    for (var a = 0; a < TWO_PI * loop; a += 0.0002 * loop) {
-      if (this.hue >= 360) {
-        this.hue = 0;
-      }
-      var r = 300 * cos(this.constant * a);
+    var gcd = simplify(this.numerate, this.denominate);
+    this.numerate = gcd[0];
+    this.denominate = gcd[1];
+    var p = oddOrEven(this.constant, this.numerate, this.denominate);
+    textAlign(LEFT, CENTER);
+    strokeWeight(window.innerWidth / window.innerHeight * 2);
+    for (var a = 0; a < TWO_PI * loop / p; a += PI / 2000) {
+      var hue = degrees(a) * p / loop + this.startHue;
+      hue %= 360;
+      var r = window.innerHeight * cos(this.constant * a) / 5;
       var x = r * cos(a) + this.xOrigin;
       var y = r * sin(a) + this.yOrigin;
-      stroke(this.hue, this.saturation, this.lightness);
+      stroke(hue, this.saturation, this.lightness);
       point(x, y);
-      this.hue += int;
     }
   }
 }
@@ -54,6 +56,22 @@ function reduceDenominator(numerator, denominator) {
   return denominator / rec(numerator, denominator);
 }
 
+function simplify(numerator, denominator){
+  var gcd = function gcd(a, b){
+    return b ? gcd(b, a % b) : a;
+  };
+  gcd = gcd(numerator, denominator);
+  return [numerator / gcd, denominator / gcd];
+}
+
+function oddOrEven(c, n, d) {
+  if (c % 2 === 1 || n % 2 === 1 && d % 2 === 1) {
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
 function drawGradient() {
   var l = 20;
   var ry =  window.innerHeight/2;
@@ -61,8 +79,11 @@ function drawGradient() {
   for (var rx = window.innerWidth/2; rx > 0; rx--) {
     fill(h, 100, l);
     noStroke();
+    push();
+    translate(width / 2, height / 2);
     rect(0, 0, rx, ry);
-    l = l + 50 / window.innerHeight;
+    pop();
+    l = l - 50 / window.innerHeight;
     if (ry > 0) {
       ry--;
     }
@@ -74,9 +95,24 @@ function rst() {
 }
 
 function draw() {
-  translate(width / 2, height / 2);
+  nxtSet.position(window.innerWidth / 1.11, window.innerHeight / 2);
+  nxtSet.style('background-color', 'hsl(' + random(0, 360) + ', 100%, 50%)');
   drawGradient();
-  var rose1 = new Rose(0, 0, Math.ceil(Math.random() * 20), Math.ceil(Math.random() * 20), Math.floor(Math.random() * 360));
-  rose1.draw();
+  var rose = [];
+  for (var yPos = window.innerHeight / 4; yPos <= window.innerHeight * 3 / 4; yPos += window.innerHeight / 2) {
+    for (var xPos = window.innerWidth / 10; xPos <= window.innerWidth * 9 / 10; xPos += window.innerWidth / 5) {
+      nCount++;
+      if (nCount === 21) {
+        nCount = 1;
+        dCount++;
+      } if (dCount === 21) {
+        dCount = 1;
+      }
+      rose.push(new Rose(xPos, yPos, nCount, dCount, Math.floor(Math.random() * 360)));
+    }
+  }
+  for (var num = 0; num < rose.length; num++) {
+    rose[num].draw();
+  }
   noLoop();
 }
