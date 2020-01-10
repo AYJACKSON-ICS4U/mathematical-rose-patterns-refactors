@@ -8,17 +8,15 @@
 // Function for creating a new Rhodonea
 var Rhodonea = function() {
     // Denominator and numerator variables to later define k
-    this.d = 10;
-    this.n = 5;
-    // this.sliderD;
-     this.sliderN;
+    this.d = 8;
+    this.n = 10;
 
     /* Refactor additions for adding oscillations */
+    this.slider;
     this.color;
     this.startAngle = 0;
-    this.amplitude = 600;
+    this.amplitude = 50;
     this.period = 500;
-    this.angleVel = 0;
 }
 
 // Update the Rhodonea's oscillation
@@ -33,29 +31,25 @@ Rhodonea.prototype.draw = function(){
   push();
   translate(width / 2, height / 2);
   beginShape();
+  // Adding color 
   stroke(this.color);
   noFill();
   strokeWeight(1);
-  this.n = this.sliderN.value();
 
+  /*Refactored code begins */
+  this.amplitude = this.slider.value();
+ 
   // Set angle to angle on rose
   var angle = this.startAngle;
   var deno = sin(angle) * this.amplitude;
-    
-  // Increment the angle by the angle velocity
-  //angle += this.angleVel;
-     
-      //this.n = y;
-      console.log(deno / 10);
-  //this.d = deno /10;
-  var k = this.n / (deno / 10);
-  //k = constrain(k, -100, 1);
 
-  if (k > 7){
-    k = 7;
-  }
-  
-  for (var a = 0; a < TWO_PI * this.reduceDenominator(); a += 0.02) {
+  deno = parseFloat(deno.toFixed(2))
+ //deno = Math.round(deno);
+  this.d = deno;
+  var k = this.n / this.d;
+
+  // For loop from the original draw function
+  for (var a = 0; a < TWO_PI * 5; a += 0.02) {
     var r = 200 * cos(k * a);
     var nx = r * cos(a);
     var ny = r * sin(a);
@@ -68,38 +62,42 @@ Rhodonea.prototype.draw = function(){
 
 // This defines variables color and angelVel and should be called in setup()
 Rhodonea.prototype.initialize = function(){
-    /* Create the sliders (from original setup function) */
-    // this.sliderD = createSlider(1,20,10,1);
-    this.sliderN = createSlider(1,20,10,1);
-    // this.sliderD.input(draw);
-    this.sliderN.input(draw);
+    /* Create a slider to edit amplitude */
+    this.slider = createSlider(10,50,5,10);
+    this.slider.input(draw);
 
     /* Added Code */
-
     // Generate a random RGB value
     this.color = color(random()*256,random()*256,random()*256);
-
-    // Set the default angle velocity (this must be called in setup due to use of TWO_PI constant)
-    this.angleVel = (TWO_PI / this.period) * 5;
 }
 
 //This is directly adapted to Object Oriented format from the original reduceDenominator function
-Rhodonea.prototype.reduceDenominator = function (){
+Rhodonea.prototype.reduceDenominator = function (nume,deno){
     function rec(a, b){
+
         return b ? rec(b, a % b) : a;
     }
-    return this.d / rec(this.n, this.d);
+  
+    const toReturn =  deno / rec(nume,deno);
+    if(toReturn < 1000){
+     //s console.log("Overflow")
+      return toReturn;
+    }
+
+    return deno;
 }
 
-
+// Create a new Rhodonea object
 var rose = new Rhodonea();
 
 function setup() {
     createCanvas(windowWidth - 50, windowHeight - 70);
+    // Call the initialize function to create a Slider for the Rhodonea and establish color
     rose.initialize();
 }
 
 function draw() {
+  // Show a few titles
   background(0);
   fill(255);
   stroke(255);
@@ -107,6 +105,8 @@ function draw() {
   text("Oscillating Rhodonea",10,40);
   textSize(12);
   text("Sabrina Button 2019", 10, 70);
+  // Update and draw the rose
   rose.update();
   rose.draw();
+  text("Adjust Amplitude ( " + rose.amplitude + " )", 0,  width - 250);
 }
