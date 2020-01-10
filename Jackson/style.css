@@ -1,0 +1,16 @@
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+}
+
+button {
+  border: none;
+  font-size: 24px;
+  padding: 6px 10px;
+  outline: none;
+  transform: translate(0, -20px);
+}
