@@ -12,15 +12,18 @@ var Rhodonea = function() {
     this.n = 10;
 
     /* Refactor additions for adding oscillations */
-    this.slider;
+    this.ampSlider;
+    this.perSlider;
     this.color;
     this.startAngle = 0;
     this.amplitude = 50;
-    this.period = 500;
+    this.period = 10000;
 }
 
 // Update the Rhodonea's oscillation
 Rhodonea.prototype.update = function() {
+  // Set value of period to the corresponding slider value
+  this.period = this.perSlider.value();
   // Increment the start angle 
   this.startAngle += TWO_PI / this.period;
 };
@@ -37,7 +40,7 @@ Rhodonea.prototype.draw = function(){
   strokeWeight(1);
 
   /*Refactored code begins */
-  this.amplitude = this.slider.value();
+  this.amplitude = this.ampSlider.value();
  
   // Set angle to angle on rose
   var angle = this.startAngle;
@@ -49,7 +52,7 @@ Rhodonea.prototype.draw = function(){
   var k = this.n / this.d;
 
   // For loop from the original draw function
-  for (var a = 0; a < TWO_PI * 5; a += 0.02) {
+  for (var a = 0; a < TWO_PI * this.d; a += 0.02) {
     var r = 200 * cos(k * a);
     var nx = r * cos(a);
     var ny = r * sin(a);
@@ -63,28 +66,16 @@ Rhodonea.prototype.draw = function(){
 // This defines variables color and angelVel and should be called in setup()
 Rhodonea.prototype.initialize = function(){
     /* Create a slider to edit amplitude */
-    this.slider = createSlider(10,50,5,10);
-    this.slider.input(draw);
+    this.ampSlider = createSlider(10,50,5,10);
+    this.ampSlider.input(draw);
+
+    /* Create a slider to edit period */
+    this.perSlider = createSlider(500,10000,19,500);
+    this.perSlider.input(draw);
 
     /* Added Code */
     // Generate a random RGB value
     this.color = color(random()*256,random()*256,random()*256);
-}
-
-//This is directly adapted to Object Oriented format from the original reduceDenominator function
-Rhodonea.prototype.reduceDenominator = function (nume,deno){
-    function rec(a, b){
-
-        return b ? rec(b, a % b) : a;
-    }
-  
-    const toReturn =  deno / rec(nume,deno);
-    if(toReturn < 1000){
-     //s console.log("Overflow")
-      return toReturn;
-    }
-
-    return deno;
 }
 
 // Create a new Rhodonea object
@@ -108,5 +99,6 @@ function draw() {
   // Update and draw the rose
   rose.update();
   rose.draw();
-  text("Adjust Amplitude ( " + rose.amplitude + " )", 0,  width - 250);
+  text("Adjust Amplitude ( " + rose.amplitude + " )", 0,  height -  10);
+  text("Adjust Period ( " + rose.period + " )", 140,  height -  10);
 }
