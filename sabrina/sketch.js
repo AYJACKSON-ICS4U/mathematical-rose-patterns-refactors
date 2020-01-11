@@ -47,12 +47,11 @@ Rhodonea.prototype.draw = function(){
   var deno = sin(angle) * this.amplitude;
 
   deno = parseFloat(deno.toFixed(2))
- //deno = Math.round(deno);
   this.d = deno;
   var k = this.n / this.d;
 
   // For loop from the original draw function
-  for (var a = 0; a < TWO_PI * this.d; a += 0.02) {
+  for (var a = 0; a < TWO_PI * Math.abs(this.d); a += 0.02) {
     var r = 200 * cos(k * a);
     var nx = r * cos(a);
     var ny = r * sin(a);
