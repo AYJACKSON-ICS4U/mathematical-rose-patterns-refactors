@@ -4,9 +4,9 @@ Creative object-oriented refactors of mathematical rose pattern coding challenge
 Credits to Dan Shiffman for the original code and the [Coding Challenge](https://thecodingtrain.com/CodingChallenges/055-roses.html).
 
 ## The Refactors
-Sabrina - Oscillating Rhondea
+Sabrina - [Oscillating Rhondea](https://sabrinabutton.github.io/oscillating-rhodonea/)
 
-Jackson - Color Gradient Roses
+Jackson - [Color Gradient Roses](https://jacksonminecraft.github.io/Colour-Gradient-Mathematical-Rose-Patterns/)
 
 Anoushka - Randomized Color-Changing Roses
 
